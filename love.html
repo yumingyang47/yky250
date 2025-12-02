@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>给你的一个小秘密</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial;
+      background: linear-gradient(145deg, #ffe1e7, #ffd4f0, #e7d9ff);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .btn {
+      padding: 16px 28px;
+      background: #ff6b81;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-size: 20px;
+      box-shadow: 0 10px 25px rgba(255, 107, 129, 0.35);
+      cursor: pointer;
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    .mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 520px;
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 20px 40px rgba(0,0,0,.45);
+      font-family: "SF Mono", "Consolas", monospace;
+      position: relative;
+    }
+
+    /* Mac 风格顶部点点 */
+    .dots {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .red { background: #ff5f57; }
+    .yellow { background: #febc2e; }
+    .green { background: #28c840; }
+
+    pre {
+      white-space: pre-wrap;
+      line-height: 1.5;
+      min-height: 120px;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 6px;
+      background: #e2e8f0;
+      animation: blink 1s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .close-btn {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      border: none;
+      padding: 6px 12px;
+      background: #4ade80;
+      color: #064e3b;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <button class="btn" id="openBtn">点一下，有东西想给你 💗</button>
+
+  <div id="mask" class="mask hidden">
+    <div class="modal">
+      <div class="dots">
+        <div class="dot red"></div>
+        <div class="dot yellow"></div>
+        <div class="dot green"></div>
+      </div>
+
+      <pre id="code"></pre>
+
+      <button class="close-btn" id="closeBtn">收下啦 ❤️</button>
+    </div>
+  </div>
+
+  <script>
+    // 👉 修改这里的文字，就是你的表白内容
+    const loveCode = `// 写给你的一个小程序
+
+const you = "你";
+const me = "我";
+
+function like(person) {
+  return "其实我已经喜欢" + person + "很久了。";
+}
+
+if (you === "正在看这个页面的人") {
+  console.log(like(you));
+  // 所以……
+  // 你愿意让我继续喜欢你吗？
+}`;
+
+    function typeWriter(text, el, speed = 40) {
+      el.innerHTML = "";
+      let i = 0;
+      const cursor = document.createElement("span");
+      cursor.className = "cursor";
+      cursor.textContent = " ";
+      el.appendChild(cursor);
+
+      const timer = setInterval(() => {
+        if (i < text.length) {
+          cursor.insertAdjacentText("beforebegin", text[i]);
+          i++;
+        } else {
+          clearInterval(timer);
+        }
+      }, speed);
+    }
+
+    const openBtn = document.getElementById("openBtn");
+    const closeBtn = document.getElementById("closeBtn");
+    const mask = document.getElementById("mask");
+    const codeEl = document.getElementById("code");
+
+    openBtn.addEventListener("click", () => {
+      mask.classList.remove("hidden");
+      typeWriter(loveCode, codeEl);
+    });
+
+    closeBtn.addEventListener("click", () => {
+      mask.classList.add("hidden");
+    });
+
+    mask.addEventListener("click", (e) => {
+      if (e.target === mask) {
+        mask.classList.add("hidden");
+      }
+    });
+  </script>
+
+</body>
+</html>
