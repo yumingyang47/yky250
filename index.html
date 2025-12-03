@@ -1,241 +1,258 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>摩天轮与粉色爱心烟花</title>
-
 <style>
-  body {
-    margin: 0;
-    overflow: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
-    background: #ffb7d5; /* 全粉色背景 */
-    box-shadow: 0 0 200px #ff6b9e inset;
-  }
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #ffb7d5;
+}
 
-  /* ===== 横向拉长按钮 ===== */
-  #startBtn {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    
-    padding: 30px 250px;      /* 🌸 横向拉长按钮 */
-    background: #ff5f8e;
-    color: #fff;
-    border: none;
-    border-radius: 999px;
-    font-size: 42px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 18px 45px rgba(255,107,150,0.5);
-    z-index: 10;
-    transition: transform 0.25s ease;
-  }
+/* 按钮 */
+#startBtn {
+position: absolute;
+left: 50%;
+top: 50%;
+transform: translate(-50%, -50%);
+padding: 20px 120px;
+font-size: 28px;
+font-weight: 600;
+color: white;
+background: linear-gradient(135deg,#ff5f8e,#ff8ab4);
+border-radius: 999px;
+border: none;
+cursor: pointer;
+box-shadow: 0 12px 30px rgba(255,107,150,0.6);
+z-index: 20;
+transition: transform 0.3s ease;
+}
 
-  #startBtn:hover {
-    transform: translate(-50%, -50%) scale(1.08);
-  }
+#startBtn:hover {
+transform: translate(-50%, -50%) scale(1.08);
+box-shadow: 0 15px 40px rgba(255,107,150,0.8);
+}
 
-  /* ===== 场景容器 ===== */
-  #scene {
-    display: none;
-    width: 100vw;
-    height: 100vh;
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(#1a0430, #000);
-    overflow: hidden;
-  }
+/* 场景 */
+#scene {
+display: none;
+width: 100vw;
+height: 100vh;
+position: fixed;
+inset: 0;
+background: #ffb7d5;
+overflow: hidden;
+}
 
-  /* ===== 摩天轮 ===== */
-  #wheel {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 760px;
-    height: 760px;
-    transform: translate(-50%, -50%);
-    opacity: 0.75;
-    z-index: 1;
-    filter: drop-shadow(0 0 25px rgba(255,150,220,0.45));
-  }
+/* 摩天轮容器 */
+#wheel-container {
+position: absolute;
+width: 400px;
+height: 400px;
+left: 50%;
+top: 50%;
+transform: translate(-50%, -50%);
+z-index: 10;
+}
 
-  @keyframes spin {
-    from { transform: translate(-50%, -50%) rotate(0deg); }
-    to   { transform: translate(-50%, -50%) rotate(360deg); }
-  }
+/* 摩天轮旋转部分 */
+#wheel-rotating {
+width: 100%;
+height: 100%;
+transform-origin: center;
+}
 
-  /* ===== 粒子烟花 ===== */
-  #fireworks {
-    position: absolute;
-    inset: 0;
-    z-index: 5;
-  }
+/* 小舱样式 */
+.cabin {
+width: 43px;
+height: 43px;
+box-sizing: border-box;
+background-color: #ffe3f7;
+border: 4px solid #ff6bb5;
+border-radius: 12px;
+display: flex;
+justify-content: center;
+align-items: center;
+box-shadow: 0 6px 15px rgba(255,107,181,0.4);
+font-size: 18px;
+color: #ff2d6a;
+pointer-events: none;
+}
 
-  /* ===== 小星星 ===== */
-  #stars {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-  }
-</style>
+/* 烟花 canvas */
+#fireworks {
+position: fixed;
+inset: 0;
+z-index: 1;
+pointer-events: none;
+}
+
+/* 固定柱子 */
+#pillar {
+position: absolute;
+width: 12px;
+height: 400px;
+background: #5a7b9a;
+left: 50%;
+top: 50%;
+transform: translateX(-50%) translateY(0px);
+z-index: 5;
+} </style>
+
 </head>
-
 <body>
 
 <button id="startBtn">点一下，有东西想给你 💗</button>
 
 <div id="scene">
-  <img id="wheel" src="data:image/svg+xml;utf8,
-  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'>
-    <circle cx='200' cy='200' r='180' stroke='%23a6d8ff' stroke-width='4' fill='none'/>
-    <circle cx='200' cy='200' r='8' fill='%23fff'/>
-    %s
-  </svg>" />
-
   <canvas id="fireworks"></canvas>
-  <canvas id="stars"></canvas>
+
+  <!-- 固定支撑柱 -->
+
+  <div id="pillar"></div>
+
+  <!-- 摩天轮旋转部分 -->
+
+  <div id="wheel-container">
+    <svg viewBox="0 0 400 400" id="wheel-rotating">
+      <circle cx="200" cy="200" r="180" stroke="#a6d8ff" stroke-width="8" fill="none" stroke-dasharray="5,5"/>
+      <circle cx="200" cy="200" r="185" stroke="#87c3ff" stroke-width="3" fill="none"/>
+      <g id="spokes"></g>
+      <g id="cabins-group"></g>
+      <circle cx="200" cy="200" r="18" fill="#5a7b9a"/>
+      <circle cx="200" cy="200" r="10" fill="#fff"/>
+      <circle cx="200" cy="200" r="5" fill="#ff6bb5"/>
+    </svg>
+  </div>
 </div>
 
 <script>
-/* ===== 动态生成摩天轮小舱 ===== */
-let cabins = "";
-for (let i = 0; i < 16; i++) {
-  const angle = (Math.PI * 2 * i) / 16;
-  const x = 200 + Math.cos(angle) * 160;
-  const y = 200 + Math.sin(angle) * 160;
-  cabins += `<circle cx='${x}' cy='${y}' r='12' fill='%23ffe3f7' stroke='%23ff9cd7' stroke-width='3'/>`;
-}
-document.getElementById("wheel").src =
-  document.getElementById("wheel").src.replace("%s", cabins);
-
-/* ===== 按钮点击进入场景 ===== */
+// 按钮点击
 const btn = document.getElementById("startBtn");
 const scene = document.getElementById("scene");
-const wheel = document.getElementById("wheel");
-
 btn.onclick = () => {
   btn.style.display = "none";
   scene.style.display = "block";
+  createWheelCabins();
+  startWheelRotation();
   startFireworks();
-  startStars();
-  startWheel(); // 确保摩天轮旋转
 };
 
-/* ===== 摩天轮旋转 ===== */
-function startWheel() {
-  // 给 wheel 添加 CSS 动画
-  wheel.style.animation = "spin 15s linear infinite";
+// 创建小舱和轮辐
+function createWheelCabins() {
+  const group = document.getElementById("cabins-group");
+  const spokes = document.getElementById("spokes");
+  const center = 200;
+  const radius = 180;
+  const numCabins = 8;
+
+  group.innerHTML = '';
+  spokes.innerHTML = '';
+
+  for (let i=0;i<numCabins;i++){
+    const angle = (Math.PI*2*i)/numCabins;
+
+    // 创建轮辐
+    const line = document.createElementNS("http://www.w3.org/2000/svg","line");
+    line.setAttribute("x1", center);
+    line.setAttribute("y1", center);
+    line.setAttribute("x2", center + radius*Math.cos(angle));
+    line.setAttribute("y2", center + radius*Math.sin(angle));
+    line.setAttribute("stroke","#ff6bb5");
+    line.setAttribute("stroke-width","2");
+    spokes.appendChild(line);
+
+    // 创建小舱
+    const x = center + radius*Math.cos(angle) - 23;
+    const y = center + radius*Math.sin(angle) - 23;
+
+    const foreign = document.createElementNS("http://www.w3.org/2000/svg","foreignObject");
+    foreign.setAttribute("x",x);
+    foreign.setAttribute("y",y);
+    foreign.setAttribute("width",46);
+    foreign.setAttribute("height",46);
+
+    const div = document.createElement("div");
+    div.classList.add("cabin");
+    if(i===0) div.textContent = "❤️"; // 特殊小舱加爱心
+    foreign.appendChild(div);
+    group.appendChild(foreign);
+  }
 }
 
-/* ===== 心形方程 ===== */
-function heartShape(t) {
-  return {
-    x: 16 * Math.pow(Math.sin(t), 3),
-    y: -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)),
-  };
+// 摩天轮旋转
+function startWheelRotation() {
+  const wheel = document.getElementById("wheel-rotating");
+  let deg = 90; // 初始让第一个小舱在正下方
+  function rotate() {
+    deg += 0.2;
+    wheel.style.transform = `rotate(${deg}deg)`;
+    requestAnimationFrame(rotate);
+  }
+  rotate();
 }
 
-/* ===== 爱心烟花 ===== */
-function startFireworks() {
+// 爱心方程
+function heartShape(t){
+  return {x:16*Math.pow(Math.sin(t),3), y:-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))};
+}
+
+// 烟花
+function startFireworks(){
   const canvas = document.getElementById("fireworks");
   const ctx = canvas.getContext("2d");
-
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
   resize();
   window.onresize = resize;
 
-  const particles = [];
+  let particles = [];
+  const fireworkDuration = 1500; // 每个烟花持续时间
 
-  function createFirework() {
+  function createFirework(){
+    particles = []; // 清空上一次烟花
     const x = Math.random() * canvas.width * 0.8 + canvas.width * 0.1;
-    const y = Math.random() * canvas.height * 0.4 + 80;
-
-    const count = 150;
-    for (let i = 0; i < count; i++) {
-      const t = (Math.PI * 2) * (i / count);
-      const h = heartShape(t);
-
+    const y = Math.random() * canvas.height * 0.4 + 100;
+    for(let i=0;i<180;i++){
+      const t=(Math.PI*2)*(i/180);
+      const h=heartShape(t);
       particles.push({
-        x, y,
-        vx: h.x * (Math.random() * 0.6 + 0.7),
-        vy: h.y * (Math.random() * 0.6 + 0.7),
-        alpha: 1,
-        size: 2 + Math.random() * 2,
-        decay: Math.random() * 0.015 + 0.01
+        x,y,
+        vx:h.x*(Math.random()*0.5+0.6),
+        vy:h.y*(Math.random()*0.5+Math.random()*0.6),
+        alpha:1,
+        size:2+Math.random()*3,
+        decay:Math.random()*0.01+0.005,
+        color:`hsl(${Math.random()*20+330},100%,${70+Math.random()*20}%)`
       });
     }
+
+    setTimeout(createFirework, fireworkDuration);
   }
 
-  setInterval(createFirework, 900);
-
-  function loop() {
-    ctx.fillStyle = "rgba(0,0,0,0.18)";
+  function loop(){
+    ctx.fillStyle="rgba(255,183,213,0.05)";
     ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    particles.forEach((p, i) => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.alpha -= p.decay;
-
-      if (p.alpha <= 0) particles.splice(i,1);
-
-      ctx.globalAlpha = p.alpha;
-      ctx.fillStyle = "#ff84d8";
+    for(let i=particles.length-1;i>=0;i--){
+      const p=particles[i];
+      p.x+=p.vx*0.35;
+      p.y+=p.vy*0.35;
+      p.vy+=0.03;
+      p.alpha-=p.decay;
+      if(p.alpha<=0){particles.splice(i,1); continue;}
+      ctx.globalAlpha=p.alpha;
+      ctx.fillStyle=p.color;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
       ctx.fill();
-    });
-
+    }
     requestAnimationFrame(loop);
   }
 
-  loop();
-}
-
-/* ===== 星空闪烁 ===== */
-function startStars() {
-  const canvas = document.getElementById("stars");
-  const ctx = canvas.getContext("2d");
-
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  resize();
-  window.onresize = resize;
-
-  const stars = [];
-  for (let i = 0; i < 120; i++) {
-    stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      size: Math.random() * 2 + 1,
-      alpha: Math.random(),
-      delta: Math.random() * 0.02 + 0.01
-    });
-  }
-
-  function loop() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    stars.forEach(s => {
-      s.alpha += s.delta;
-      if(s.alpha > 1) { s.alpha = 1; s.delta *= -1; }
-      if(s.alpha < 0) { s.alpha = 0; s.delta *= -1; }
-      ctx.globalAlpha = s.alpha;
-      ctx.fillStyle = "#fff";
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-      ctx.fill();
-    });
-    requestAnimationFrame(loop);
-  }
-
+  createFirework();
   loop();
 }
 </script>
