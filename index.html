@@ -5,34 +5,44 @@
 <title>摩天轮与粉色爱心烟花</title>
 
 <style>
+  /* ===== 页面背景 ===== */
   body {
     margin: 0;
     overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
 
-    /* 🎀 背景改成纯粉色 */
-    background: #ffb7d5;
-    background-attachment: fixed;
-
+    background: #ffb7d5; /* 🌸 纯粉色背景 */
     box-shadow: 0 0 200px #ff6b9e inset;
   }
 
+  /* ===== 超大按钮 ===== */
   #startBtn {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    padding: 26px 55px;       /* 🎀 加大按钮 */
-    background: #ff6b81;
+    
+    padding: 38px 85px;       /* 🌸 超大按钮 */
+    background: #ff5f8e;
     color: #fff;
     border: none;
-    border-radius: 999px;     /* 🎀 圆润 */
-    font-size: 30px;          /* 🎀 加大字体 */
+    border-radius: 999px;
+    
+    font-size: 42px;          /* 🌸 字体更大 */
+    font-weight: 600;
+    
     cursor: pointer;
-    box-shadow: 0 12px 35px rgba(255,107,129,0.45);
+    box-shadow: 0 18px 45px rgba(255,107,150,0.5);
     z-index: 10;
+    
+    transition: transform 0.25s ease;
   }
 
+  #startBtn:hover {
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+
+  /* ===== 场景容器 ===== */
   #scene {
     display: none;
     width: 100vw;
@@ -40,21 +50,22 @@
     position: fixed;
     inset: 0;
 
-    /* 保留你的粉紫夜空，不动 */
     background: radial-gradient(#1a0430, #000);
   }
 
+  /* ===== 摩天轮 ===== */
   #wheel {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 700px;
-    height: 700px;
+    width: 760px;                /* 🌸 稍微放大摩天轮 */
+    height: 760px;
     transform: translate(-50%, -50%);
-    opacity: 0.65;
+    opacity: 0.75;
     z-index: 1;
-    animation: spin 30s linear infinite;
-    filter: drop-shadow(0 0 20px rgba(140,200,255,0.4));
+    
+    animation: spin 15s linear infinite; /* 🌸 转得更明显 */
+    filter: drop-shadow(0 0 25px rgba(255,150,220,0.45));
   }
 
   @keyframes spin {
@@ -62,6 +73,7 @@
     to   { transform: translate(-50%, -50%) rotate(360deg); }
   }
 
+  /* ===== 粒子烟花 ===== */
   #fireworks {
     position: absolute;
     inset: 0;
@@ -86,6 +98,7 @@
 </div>
 
 <script>
+/* ===== 动态生成摩天轮小舱 ===== */
 let cabins = "";
 for (let i = 0; i < 16; i++) {
   const angle = (Math.PI * 2 * i) / 16;
@@ -96,6 +109,7 @@ for (let i = 0; i < 16; i++) {
 document.getElementById("wheel").src =
   document.getElementById("wheel").src.replace("%s", cabins);
 
+/* ===== 按钮进入场景 ===== */
 const btn = document.getElementById("startBtn");
 const scene = document.getElementById("scene");
 
@@ -105,6 +119,7 @@ btn.onclick = () => {
   startFireworks();
 };
 
+/* ===== 心形参数方程 ===== */
 function heartShape(t) {
   return {
     x: 16 * Math.pow(Math.sin(t), 3),
@@ -112,6 +127,7 @@ function heartShape(t) {
   };
 }
 
+/* ===== 爱心烟花系统 ===== */
 function startFireworks() {
   const canvas = document.getElementById("fireworks");
   const ctx = canvas.getContext("2d");
