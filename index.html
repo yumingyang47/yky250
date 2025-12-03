@@ -5,20 +5,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>摩天轮与粉色爱心烟花</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 <style>
 body {
   margin: 0;
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: #ffb7d5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
+
+/* 动态文字 */
+#dynamicText {
+font-family: 'Pacifico', cursive;
+font-size: 28px;
+color: #fff;
+text-align: center;
+margin-bottom: 20px;
+min-height: 40px;
+text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 /* 按钮 */
 #startBtn {
-position: absolute;
-left: 50%;
-top: 50%;
-transform: translate(-50%, -50%);
 padding: 16px 40px;
 min-width: 200px;
 font-size: 22px;
@@ -36,11 +49,10 @@ transition: transform 0.3s ease;
 }
 
 #startBtn:hover {
-transform: translate(-50%, -50%) scale(1.08);
+transform: scale(1.08);
 box-shadow: 0 12px 35px rgba(255,107,150,0.8);
 }
 
-/* 手机端自适应按钮 */
 @media (max-width: 480px){
 #startBtn {
 padding: 12px 20px;
@@ -106,6 +118,7 @@ pointer-events: none;
 </head>
 <body>
 
+<div id="dynamicText"></div>
 <button id="startBtn">点击 有惊喜💗</button>
 
 <div id="scene">
@@ -130,8 +143,24 @@ pointer-events: none;
 <script>
 const btn = document.getElementById("startBtn");
 const scene = document.getElementById("scene");
+
+// 动态文字打字效果
+const dynamicText = document.getElementById("dynamicText");
+const text = "The new scene of the New year, love companion.";
+let idx = 0;
+function typeWriter(){
+  if(idx < text.length){
+    dynamicText.textContent += text[idx];
+    idx++;
+    setTimeout(typeWriter, 100);
+  }
+}
+typeWriter();
+
+// 按钮点击事件
 btn.onclick = () => {
   btn.style.display = "none";
+  dynamicText.style.display = "none";
   scene.style.display = "block";
   createWheelCabins();
   startWheelRotation();
@@ -151,8 +180,6 @@ function createWheelCabins(){
 
   for(let i=0;i<numCabins;i++){
     const angle = (Math.PI*2*i)/numCabins;
-
-    // 轮辐
     const line = document.createElementNS("http://www.w3.org/2000/svg","line");
     line.setAttribute("x1", center);
     line.setAttribute("y1", center);
@@ -162,7 +189,6 @@ function createWheelCabins(){
     line.setAttribute("stroke-width","2");
     spokes.appendChild(line);
 
-    // 小舱
     const x = center + radius*Math.cos(angle) - 15;
     const y = center + radius*Math.sin(angle) - 15;
     const foreign = document.createElementNS("http://www.w3.org/2000/svg","foreignObject");
