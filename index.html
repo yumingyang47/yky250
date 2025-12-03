@@ -3,12 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <title>摩天轮与粉色爱心烟花</title>
+
 <style>
   body {
     margin: 0;
     overflow: hidden;
-    background: #000;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+
+    /* 🌸 粉色渐变背景（恢复你想要的） */
+    background: radial-gradient(circle at 50% 40%, #ff9bc1, #ff74a4, #ff3f7a, #2b0026);
+    background-attachment: fixed;
+
+    /* 渐变内光 */
+    box-shadow: 0 0 200px #ff6b9e inset;
   }
 
   #startBtn {
@@ -23,7 +30,7 @@
     border-radius: 999px;
     font-size: 22px;
     cursor: pointer;
-    box-shadow: 0 10px 25px rgba(255,107,129,0.35);
+    box-shadow: 0 10px 25px rgba(255,107,129,0.45);
     z-index: 10;
   }
 
@@ -33,7 +40,9 @@
     height: 100vh;
     position: fixed;
     inset: 0;
-    background: radial-gradient(#020618, #000);
+
+    /* 🌌 改成粉紫夜空，而不是纯黑 */
+    background: radial-gradient(#1a0430, #000);
   }
 
   /* 摩天轮背景 */
@@ -44,9 +53,10 @@
     width: 700px;
     height: 700px;
     transform: translate(-50%, -50%);
-    opacity: 0.55;
+    opacity: 0.65;
     z-index: 1;
     animation: spin 30s linear infinite;
+    filter: drop-shadow(0 0 20px rgba(140,200,255,0.4));
   }
 
   @keyframes spin {
@@ -62,17 +72,17 @@
   }
 </style>
 </head>
+
 <body>
 
 <button id="startBtn">点一下，有东西想给你 💗</button>
 
 <div id="scene">
-  <!-- 真实摩天轮 SVG -->
+  <!-- 摩天轮 SVG（动态填充轮舱） -->
   <img id="wheel" src="data:image/svg+xml;utf8,
   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'>
     <circle cx='200' cy='200' r='180' stroke='%23a6d8ff' stroke-width='4' fill='none'/>
     <circle cx='200' cy='200' r='8' fill='%23fff'/>
-    <!-- 轮舱 -->
     %s
   </svg>" />
 
@@ -80,7 +90,7 @@
 </div>
 
 <script>
-/* 创建 16 个摩天轮小舱 */
+/* ===== 动态生成摩天轮小舱 ===== */
 let cabins = "";
 for (let i = 0; i < 16; i++) {
   const angle = (Math.PI * 2 * i) / 16;
@@ -91,16 +101,17 @@ for (let i = 0; i < 16; i++) {
 document.getElementById("wheel").src =
   document.getElementById("wheel").src.replace("%s", cabins);
 
-/* 场景切换 */
+/* ===== 按钮进入场景 ===== */
 const btn = document.getElementById("startBtn");
 const scene = document.getElementById("scene");
+
 btn.onclick = () => {
   btn.style.display = "none";
   scene.style.display = "block";
   startFireworks();
 };
 
-/* 爱心方程 */
+/* 心形参数方程 */
 function heartShape(t) {
   return {
     x: 16 * Math.pow(Math.sin(t), 3),
@@ -108,7 +119,7 @@ function heartShape(t) {
   };
 }
 
-/* 烟花系统 */
+/* ===== 爱心烟花系统 ===== */
 function startFireworks() {
   const canvas = document.getElementById("fireworks");
   const ctx = canvas.getContext("2d");
@@ -124,7 +135,7 @@ function startFireworks() {
 
   function createFirework() {
     const x = Math.random() * canvas.width * 0.8 + canvas.width * 0.1;
-    const y = Math.random() * canvas.height * 0.4 + 50;
+    const y = Math.random() * canvas.height * 0.4 + 80;
 
     const count = 150;
     for (let i = 0; i < count; i++) {
@@ -156,7 +167,7 @@ function startFireworks() {
       if (p.alpha <= 0) particles.splice(i,1);
 
       ctx.globalAlpha = p.alpha;
-      ctx.fillStyle = "#ff69c9";
+      ctx.fillStyle = "#ff84d8";
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       ctx.fill();
