@@ -13,13 +13,14 @@
     box-shadow: 0 0 200px #ff6b9e inset;
   }
 
-  /* ===== 超长按钮 ===== */
+  /* ===== 横向拉长按钮 ===== */
   #startBtn {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    padding: 38px 160px;       /* 🎀 拉长按钮 */
+    
+    padding: 30px 250px;      /* 🌸 横向拉长按钮 */
     background: #ff5f8e;
     color: #fff;
     border: none;
@@ -54,7 +55,7 @@
     top: 50%;
     width: 760px;
     height: 760px;
-    transform: translate(-50%, -50%) rotate(0deg);
+    transform: translate(-50%, -50%);
     opacity: 0.75;
     z-index: 1;
     filter: drop-shadow(0 0 25px rgba(255,150,220,0.45));
@@ -110,7 +111,7 @@ for (let i = 0; i < 16; i++) {
 document.getElementById("wheel").src =
   document.getElementById("wheel").src.replace("%s", cabins);
 
-/* ===== 按钮进入场景 ===== */
+/* ===== 按钮点击进入场景 ===== */
 const btn = document.getElementById("startBtn");
 const scene = document.getElementById("scene");
 const wheel = document.getElementById("wheel");
@@ -119,16 +120,17 @@ btn.onclick = () => {
   btn.style.display = "none";
   scene.style.display = "block";
   startFireworks();
-  startWheel();
   startStars();
+  startWheel(); // 确保摩天轮旋转
 };
 
 /* ===== 摩天轮旋转 ===== */
 function startWheel() {
+  // 给 wheel 添加 CSS 动画
   wheel.style.animation = "spin 15s linear infinite";
 }
 
-/* ===== 心形参数方程 ===== */
+/* ===== 心形方程 ===== */
 function heartShape(t) {
   return {
     x: 16 * Math.pow(Math.sin(t), 3),
@@ -136,7 +138,7 @@ function heartShape(t) {
   };
 }
 
-/* ===== 爱心烟花系统 ===== */
+/* ===== 爱心烟花 ===== */
 function startFireworks() {
   const canvas = document.getElementById("fireworks");
   const ctx = canvas.getContext("2d");
