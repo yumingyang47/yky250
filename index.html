@@ -48,19 +48,6 @@ font-family: 'Pacifico', cursive;
 font-size: 28px;
 color: white;
 white-space: nowrap;
-overflow: hidden;
-border-right: 2px solid rgba(255,255,255,0.7);
-width: 0;
-animation: typing 3s steps(40) forwards, blink 0.7s step-end infinite alternate;
-}
-
-@keyframes typing {
-from { width: 0; }
-to { width: 32ch; }
-}
-
-@keyframes blink {
-50% { border-color: transparent; }
 }
 
 /* 场景 */
@@ -120,7 +107,7 @@ pointer-events: none;
 </head>
 <body>
 
-<div id="dynamicText">The new scene of the New Year, love companion.</div>
+<div id="dynamicText"></div>
 <button id="startBtn">点击 有惊喜💗</button>
 
 <div id="scene">
@@ -145,16 +132,32 @@ pointer-events: none;
 const btn = document.getElementById("startBtn");
 const dynamicText = document.getElementById("dynamicText");
 const scene = document.getElementById("scene");
+const text = "The new scene of the New Year, love companion.";
+let index = 0;
 
+// 打字效果函数
+function typeLetter() {
+  if (index < text.length) {
+    dynamicText.textContent += text[index];
+    index++;
+    setTimeout(typeLetter, 80); // 每个字出现间隔 80ms
+  }
+}
+
+// 按钮点击事件
 btn.onclick = () => {
   btn.style.display = "none";
-  dynamicText.style.display = "none";
-  scene.style.display = "block";
-  createWheelCabins();
-  startWheelRotation();
-  startFireworks();
+  typeLetter();
+  setTimeout(() => {
+    dynamicText.style.display = "none";
+    scene.style.display = "block";
+    createWheelCabins();
+    startWheelRotation();
+    startFireworks();
+  }, text.length * 80 + 500); // 等文字显示完再切换场景
 };
 
+// 创建轮辐和小舱
 function createWheelCabins(){
   const group = document.getElementById("cabins-group");
   const spokes = document.getElementById("spokes");
@@ -191,6 +194,7 @@ function createWheelCabins(){
   }
 }
 
+// 摩天轮旋转
 function startWheelRotation(){
   const wheel = document.getElementById("wheel-rotating");
   let deg = 90;
@@ -202,10 +206,12 @@ function startWheelRotation(){
   rotate();
 }
 
+// 爱心方程
 function heartShape(t){
   return {x:16*Math.pow(Math.sin(t),3), y:-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))};
 }
 
+// 烟花效果
 function startFireworks(){
   const canvas = document.getElementById("fireworks");
   const ctx = canvas.getContext("2d");
