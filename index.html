@@ -15,8 +15,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
       text-align: center;
+      overflow: hidden;
     }
 
     .btn {
@@ -29,11 +29,9 @@
       box-shadow: 0 10px 25px rgba(255, 107, 129, 0.35);
       cursor: pointer;
     }
+    .btn:active { transform: scale(0.96); }
 
-    .btn:active {
-      transform: scale(0.96);
-    }
-
+    /* 遮罩层 */
     .mask {
       position: fixed;
       inset: 0;
@@ -43,65 +41,73 @@
       align-items: center;
       padding: 20px;
     }
+    .hidden { display: none; }
 
-    .hidden {
-      display: none;
-    }
-
+    /* 弹窗 */
     .modal {
-      width: 100%;
-      max-width: 520px;
-      background: #0f172a;
-      color: #e2e8f0;
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 20px 40px rgba(0,0,0,.45);
-      font-family: "SF Mono", "Consolas", monospace;
+      text-align: center;
+      padding: 20px;
+      color: #fff;
       position: relative;
+      animation: fadeIn 0.5s ease;
     }
 
-    /* Mac 风格顶部点点 */
-    .dots {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 14px;
+    /* 闪烁跳动爱心 */
+    .heart {
+      width: 120px;
+      height: 120px;
+      background: red;
+      position: relative;
+      transform: rotate(45deg);
+      animation: heartbeat 1s infinite ease-in-out;
     }
-    .dot {
-      width: 12px;
-      height: 12px;
+    .heart::before,
+    .heart::after {
+      content: "";
+      width: 120px;
+      height: 120px;
+      background: red;
       border-radius: 50%;
+      position: absolute;
     }
-    .red { background: #ff5f57; }
-    .yellow { background: #febc2e; }
-    .green { background: #28c840; }
+    .heart::before { left: -60px; top: 0; }
+    .heart::after { top: -60px; left: 0; }
 
-    pre {
-      white-space: pre-wrap;
-      line-height: 1.5;
-      min-height: 120px;
-    }
-
-    .cursor {
-      display: inline-block;
-      width: 6px;
-      background: #e2e8f0;
-      animation: blink 1s steps(1) infinite;
+    @keyframes heartbeat {
+      0%, 100% { transform: rotate(45deg) scale(1); }
+      50% { transform: rotate(45deg) scale(1.25); }
     }
 
-    @keyframes blink {
-      50% { opacity: 0; }
+    /* 底下的文字动画 */
+    .message {
+      margin-top: 30px;
+      font-size: 26px;
+      opacity: 0;
+      animation: fadeUp 1s forwards;
+      animation-delay: 1.2s;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .close-btn {
       position: absolute;
-      right: 12px;
-      bottom: 12px;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
       border: none;
-      padding: 6px 12px;
+      padding: 8px 18px;
       background: #4ade80;
       color: #064e3b;
       border-radius: 6px;
-      font-size: 12px;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -112,61 +118,19 @@
 
   <div id="mask" class="mask hidden">
     <div class="modal">
-      <div class="dots">
-        <div class="dot red"></div>
-        <div class="dot yellow"></div>
-        <div class="dot green"></div>
-      </div>
-
-      <pre id="code"></pre>
-
+      <div class="heart"></div>
+      <div class="message">生日快乐，我一直爱你</div>
       <button class="close-btn" id="closeBtn">收下啦 ❤️</button>
     </div>
   </div>
 
   <script>
-    // 👉 修改这里的文字，就是你的表白内容
-    const loveCode = `// 写给你的一个小程序
-
-const you = "你";
-const me = "我";
-
-function like(person) {
-  return "其实我已经喜欢" + person + "很久了。";
-}
-
-if (you === "正在看这个页面的人") {
-  console.log(like(you));
-  // 所以……
-  // 你愿意让我继续喜欢你吗？
-}`;
-
-    function typeWriter(text, el, speed = 40) {
-      el.innerHTML = "";
-      let i = 0;
-      const cursor = document.createElement("span");
-      cursor.className = "cursor";
-      cursor.textContent = " ";
-      el.appendChild(cursor);
-
-      const timer = setInterval(() => {
-        if (i < text.length) {
-          cursor.insertAdjacentText("beforebegin", text[i]);
-          i++;
-        } else {
-          clearInterval(timer);
-        }
-      }, speed);
-    }
-
     const openBtn = document.getElementById("openBtn");
     const closeBtn = document.getElementById("closeBtn");
     const mask = document.getElementById("mask");
-    const codeEl = document.getElementById("code");
 
     openBtn.addEventListener("click", () => {
       mask.classList.remove("hidden");
-      typeWriter(loveCode, codeEl);
     });
 
     closeBtn.addEventListener("click", () => {
@@ -174,9 +138,7 @@ if (you === "正在看这个页面的人") {
     });
 
     mask.addEventListener("click", (e) => {
-      if (e.target === mask) {
-        mask.classList.add("hidden");
-      }
+      if (e.target === mask) mask.classList.add("hidden");
     });
   </script>
 
