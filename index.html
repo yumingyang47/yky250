@@ -330,7 +330,7 @@ function startLoveTimer() {
     const minutes = Math.floor(diff / 60);
     const seconds = diff - minutes*60;
 
-    timerDiv.textContent = `我们恋爱已有 ${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`;
+    timerDiv.innerHTML = `我们恋爱已有<br>${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`;
   }
 
   updateTimer();
