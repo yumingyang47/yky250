@@ -31,7 +31,7 @@ body {
   line-height: 1.4;
   z-index: 20;
   font-family: 'Dancing Script', cursive;
-  white-space: pre-wrap; /* 保留空格换行 */
+  white-space: pre-wrap;
 }
 
 /* 按钮 */
@@ -71,6 +71,9 @@ body {
   #introText {
     font-size: 20px;
     max-width: 90%;
+  }
+  #loveTimer {
+    font-size: 18px;
   }
 }
 
@@ -127,13 +130,31 @@ body {
   z-index: 1;
   pointer-events: none;
 }
+
+/* 恋爱计时 */
+#loveTimer {
+  position: absolute;
+  left: 50%;
+  top: 75%;
+  transform: translateX(-50%);
+  font-size: 22px;
+  font-weight: 500;
+  color: white;
+  text-align: center;
+  font-family: 'Dancing Script', cursive;
+  z-index: 20;
+  line-height: 1.4;
+}
 </style>
 </head>
 <body>
 
+<!-- 打字机文字 -->
 <div id="introText"></div>
+<!-- 按钮 -->
 <button id="startBtn">点击 有惊喜💗</button>
 
+<!-- 场景 -->
 <div id="scene">
   <canvas id="fireworks"></canvas>
   <div id="wheel-container">
@@ -150,27 +171,29 @@ body {
       </g>
     </svg>
   </div>
+  <!-- 恋爱计时显示 -->
+  <div id="loveTimer"></div>
 </div>
 
 <script>
 const btn = document.getElementById("startBtn");
 const scene = document.getElementById("scene");
 const introText = document.getElementById("introText");
+const loveTimerDiv = document.getElementById("loveTimer");
 
+// 打字机文字
 const message = "The new scene of the New year, love companion.";
 let index = 0;
-
-// 打字机效果
 function typeWriter(){
   if(index < message.length){
     introText.textContent += message[index];
     index++;
-    setTimeout(typeWriter, 100); // 每个字出现间隔
+    setTimeout(typeWriter, 100);
   }
 }
+typeWriter();
 
-typeWriter(); // 页面加载就开始打字
-
+// 点击按钮显示场景
 btn.onclick = () => {
   btn.style.display = "none";
   introText.style.display = "none";
@@ -178,6 +201,7 @@ btn.onclick = () => {
   createWheelCabins();
   startWheelRotation();
   startFireworks();
+  startLoveTimer(); // 启动恋爱计时
 };
 
 // 创建轮辐和小舱
@@ -289,6 +313,28 @@ function startFireworks(){
 
   createFirework();
   loop();
+}
+
+// 恋爱计时
+function startLoveTimer() {
+  const timerDiv = loveTimerDiv;
+  const startTime = new Date(2023, 11, 1, 12, 30, 0); // 月份0-11，12月是11
+
+  function updateTimer() {
+    const now = new Date();
+    let diff = Math.floor((now - startTime) / 1000); // 秒
+    const days = Math.floor(diff / (3600*24));
+    diff -= days*3600*24;
+    const hours = Math.floor(diff / 3600);
+    diff -= hours*3600;
+    const minutes = Math.floor(diff / 60);
+    const seconds = diff - minutes*60;
+
+    timerDiv.textContent = `我们恋爱已有 ${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`;
+  }
+
+  updateTimer();
+  setInterval(updateTimer, 1000);
 }
 </script>
 
