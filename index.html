@@ -1,146 +1,172 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>给你的一个小秘密</title>
+<meta charset="UTF-8" />
+<title>摩天轮 + 爱心烟花</title>
+<style>
+  body {
+    margin:0;
+    overflow:hidden;
+    background:#000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+  }
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial;
-      background: linear-gradient(145deg, #ffe1e7, #ffd4f0, #e7d9ff);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      overflow: hidden;
-    }
+  /* 初始按钮 */
+  #startBtn {
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%, -50%);
+    padding:18px 36px;
+    background:#ff6b81;
+    color:#fff;
+    border:none;
+    border-radius:99px;
+    font-size:22px;
+    cursor:pointer;
+    z-index:20;
+    box-shadow:0 10px 25px rgba(255,107,129,.3);
+  }
 
-    .btn {
-      padding: 16px 28px;
-      background: #ff6b81;
-      color: #fff;
-      border: none;
-      border-radius: 999px;
-      font-size: 20px;
-      box-shadow: 0 10px 25px rgba(255, 107, 129, 0.35);
-      cursor: pointer;
-    }
-    .btn:active { transform: scale(0.96); }
+  /* 场景容器 */
+  #scene {
+    position:fixed;
+    inset:0;
+    display:none;
+    background:#000;
+  }
 
-    /* 遮罩层 */
-    .mask {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.55);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-    .hidden { display: none; }
+  /* 摩天轮容器 */
+  .wheel {
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%, -50%);
+    width:420px;
+    height:420px;
+    opacity:0.6;
+  }
 
-    /* 弹窗 */
-    .modal {
-      text-align: center;
-      padding: 20px;
-      color: #fff;
-      position: relative;
-      animation: fadeIn 0.5s ease;
-    }
+  /* 摩天轮旋转动画 */
+  .wheel svg {
+    width:100%;
+    height:100%;
+    animation: rotate 18s linear infinite;
+  }
 
-    /* 闪烁跳动爱心 */
-    .heart {
-      width: 120px;
-      height: 120px;
-      background: red;
-      position: relative;
-      transform: rotate(45deg);
-      animation: heartbeat 1s infinite ease-in-out;
-    }
-    .heart::before,
-    .heart::after {
-      content: "";
-      width: 120px;
-      height: 120px;
-      background: red;
-      border-radius: 50%;
-      position: absolute;
-    }
-    .heart::before { left: -60px; top: 0; }
-    .heart::after { top: -60px; left: 0; }
+  @keyframes rotate {
+    from { transform:rotate(0deg); }
+    to { transform:rotate(360deg); }
+  }
 
-    @keyframes heartbeat {
-      0%, 100% { transform: rotate(45deg) scale(1); }
-      50% { transform: rotate(45deg) scale(1.25); }
-    }
-
-    /* 底下的文字动画 */
-    .message {
-      margin-top: 30px;
-      font-size: 26px;
-      opacity: 0;
-      animation: fadeUp 1s forwards;
-      animation-delay: 1.2s;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .close-btn {
-      position: absolute;
-      bottom: -40px;
-      left: 50%;
-      transform: translateX(-50%);
-      border: none;
-      padding: 8px 18px;
-      background: #4ade80;
-      color: #064e3b;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-  </style>
+  /* Canvas 烟花 */
+  #fireworks {
+    position:absolute;
+    inset:0;
+    z-index:1;
+  }
+</style>
 </head>
-
 <body>
 
-  <button class="btn" id="openBtn">点一下，有东西想给你 💗</button>
+<button id="startBtn">点一下，有东西想给你 💗</button>
 
-  <div id="mask" class="mask hidden">
-    <div class="modal">
-      <div class="heart"></div>
-      <div class="message">生日快乐，我一直爱你</div>
-      <button class="close-btn" id="closeBtn">收下啦 ❤️</button>
-    </div>
+<div id="scene">
+  <!-- 旋转摩天轮 -->
+  <div class="wheel">
+    <svg viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="95" stroke="#5bc0ff" stroke-width="3" fill="none" />
+      <!-- 辐条 -->
+      <line x1="100" y1="100" x2="100" y2="5" stroke="#5bc0ff"/>
+      <line x1="100" y1="100" x2="195" y2="100" stroke="#5bc0ff"/>
+      <line x1="100" y1="100" x2="100" y2="195" stroke="#5bc0ff"/>
+      <line x1="100" y1="100" x2="5" y2="100" stroke="#5bc0ff"/>
+      <line x1="100" y1="100" x2="165" y2="35" stroke="#5bc0ff"/>
+      <line x1="100" y1="100" x2="35" y2="165" stroke="#5bc0ff"/>
+      <line x1="100" y1="100" x2="165" y2="165" stroke="#5bc0ff"/>
+      <line x1="100" y1="100" x2="35" y2="35" stroke="#5bc0ff"/>
+    </svg>
   </div>
 
-  <script>
-    const openBtn = document.getElementById("openBtn");
-    const closeBtn = document.getElementById("closeBtn");
-    const mask = document.getElementById("mask");
+  <!-- 烟花粒子 Canvas -->
+  <canvas id="fireworks"></canvas>
+</div>
 
-    openBtn.addEventListener("click", () => {
-      mask.classList.remove("hidden");
-    });
+<script>
+  /* 点击显示场景 */
+  const btn = document.getElementById("startBtn");
+  const scene = document.getElementById("scene");
+  btn.onclick = () => {
+    btn.style.display = "none";
+    scene.style.display = "block";
+    startFireworks();
+  };
 
-    closeBtn.addEventListener("click", () => {
-      mask.classList.add("hidden");
-    });
+  /* 粒子烟花 + 爱心形状 */
+  function startFireworks() {
+    const canvas = document.getElementById("fireworks");
+    const ctx = canvas.getContext("2d");
+    let w, h;
 
-    mask.addEventListener("click", (e) => {
-      if (e.target === mask) mask.classList.add("hidden");
-    });
-  </script>
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.onresize = resize;
+
+    const particles = [];
+
+    function heartShape(t) {
+      const x = 16 * Math.pow(Math.sin(t), 3);
+      const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+      return {x, y};
+    }
+
+    function createFirework() {
+      const x = Math.random() * w;
+      const y = Math.random() * h * 0.6;
+      const count = 120;
+
+      for (let i = 0; i < count; i++) {
+        const a = (Math.PI * 2) * (i / count);
+        const heart = heartShape(a * 2);
+        particles.push({
+          x,
+          y,
+          vx: heart.x * 1.5,
+          vy: heart.y * 1.5,
+          alpha: 1,
+          size: 2 + Math.random() * 2
+        });
+      }
+    }
+
+    setInterval(createFirework, 1000);
+
+    function loop() {
+      ctx.fillStyle = "rgba(0,0,0,0.2)";
+      ctx.fillRect(0,0,w,h);
+
+      particles.forEach((p, i) => {
+        p.x += p.vx * 0.5;
+        p.y += p.vy * 0.5;
+        p.alpha -= 0.009;
+
+        if (p.alpha <= 0) particles.splice(i,1);
+
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = "#ff77c8";
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+        ctx.fill();
+      });
+
+      requestAnimationFrame(loop);
+    }
+    loop();
+  }
+</script>
 
 </body>
 </html>
